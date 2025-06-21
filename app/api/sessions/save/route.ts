@@ -5,6 +5,18 @@ import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { getGeminiMCQ } from "@/lib/gemini" // You’ll create this helper
 
+type FlashcardInput = {
+  question: string;
+  answer: string;
+};
+
+type PromptInput = {
+  prompt: string;
+  numCards: number;
+  flashcards: FlashcardInput[];
+};
+
+
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions)
   if (!session?.user?.email) {
@@ -21,9 +33,9 @@ export async function POST(req: NextRequest) {
         user: { connect: { email: session.user.email } },
         prompts: {
           create: await Promise.all(
-            prompts.map(async (p: any) => {
+            (prompts as PromptInput[]).map(async (p) => {
               const flashcards = await Promise.all(
-                p.flashcards.map(async (fc: any) => {
+                p.flashcards.map(async (fc) => {
                   const mcq = await getGeminiMCQ(fc.question, fc.answer)
                   return {
                     question: fc.question,

@@ -8,15 +8,17 @@ import QuizClient from "./QuizClient";
 export default async function StudySessionPage({
   searchParams,
 }: {
-  searchParams: { ids?: string; limit?: string };
+  searchParams: Promise<{ ids?: string; limit?: string }>;
 }) {
+  const { ids, limit } = await searchParams;
+
   const session = await getServerSession(authOptions);
   if (!session?.user?.email) redirect("/login");
 
-  const ids = searchParams.ids?.split(",").filter(Boolean) || [];
-  const limit = parseInt(searchParams.limit || "10");
+  const idsArr = ids?.split(",").filter(Boolean) || [];
+  const limitNum = parseInt(limit || "10");
 
-  if (ids.length === 0) {
+  if (idsArr.length === 0) {
     return (
       <p className="text-center mt-10 text-red-600">No flashcards selected.</p>
     );
@@ -24,19 +26,19 @@ export default async function StudySessionPage({
 
   const flashcards = await prisma.flashcard.findMany({
     where: {
-      id: { in: ids },
+      id: { in: idsArr },
       prompt: {
         session: {
           user: { email: session.user.email },
         },
       },
     },
-    take: limit,
+    take: limitNum,
     select: {
       id: true,
       question: true,
       answer: true,
-      mcqOptions: true, // <-- Include this
+      mcqOptions: true,
     },
   });
 

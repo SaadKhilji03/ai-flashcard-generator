@@ -26,7 +26,7 @@ export default function GenerateForm() {
 
       const data = await res.json()
       setFlashcards(data.flashcards || [])
-    } catch (err) {
+    } catch{
       toast.error("Failed to generate flashcards.")
     } finally {
       setLoading(false)

@@ -69,7 +69,6 @@ export default function NewSessionClient() {
     })
 
     if (res.ok) {
-      const data = await res.json()
       alert("✅ Session saved!")
       // router.push(`/sessions/${data.sessionId}`)
     } else {

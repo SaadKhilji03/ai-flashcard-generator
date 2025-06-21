@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server"
 import { GoogleGenerativeAI } from "@google/generative-ai"
 
+type Flashcard = {
+  question: string;
+  answer: string;
+};
+
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
 
 export async function POST(req: Request) {
@@ -45,8 +50,8 @@ Text: """${input}"""
     const jsonString = cleanText.slice(jsonStart, jsonEnd)
     const flashcards = JSON.parse(jsonString)
 
-    const validFlashcards = flashcards.filter(
-      (card: any) =>
+    const validFlashcards = (flashcards as Flashcard[]).filter(
+      (card) =>
         card.question &&
         card.answer &&
         typeof card.question === "string" &&

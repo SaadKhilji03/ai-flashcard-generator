@@ -3,7 +3,14 @@
 import { useState } from "react"
 import { toast } from "sonner"
 
-export default function EditableFlashcard({ card }: { card: any }) {
+type Flashcard = {
+  id: string;
+  question: string;
+  answer: string;
+  // Add other fields if needed
+};
+
+export default function EditableFlashcard({ card }: { card: Flashcard }) {
   const [editing, setEditing] = useState(false)
   const [question, setQuestion] = useState(card.question)
   const [answer, setAnswer] = useState(card.answer)

@@ -2,13 +2,14 @@
 
 import { SessionProvider } from "next-auth/react"
 import { Toaster } from "sonner"
+import type { Session } from "next-auth"
 
 export function Providers({ 
   children, 
   session 
 }: { 
   children: React.ReactNode
-  session: any
+  session: Session | null
 }) {
   return (
     <SessionProvider session={session}>

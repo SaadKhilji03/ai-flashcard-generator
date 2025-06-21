@@ -2,6 +2,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
+type MCQOption = {
+  text: string;
+  isCorrect: boolean;
+};
+
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
 export async function POST(req: NextRequest) {
@@ -41,16 +46,16 @@ Ensure only one isCorrect: true.
     if (!jsonMatch) throw new Error("Failed to parse Gemini response");
 
     const parsed = JSON.parse(jsonMatch[0]);
-    let options = parsed.options || [];
+    let options: MCQOption[] = parsed.options || [];
 
     // Fallback: If Gemini didn't include a correct option, fix it here
-    if (!options.some((opt: any) => opt.isCorrect)) {
+    if (!options.some((opt: MCQOption) => opt.isCorrect)) {
       // Add the correct answer manually
       options.push({ text: answer, isCorrect: true });
     }
 
     // Ensure only one is marked correct
-    options = options.map((opt: any) => ({
+    options = options.map((opt: MCQOption) => ({
       ...opt,
       isCorrect: opt.text === answer,
     }));

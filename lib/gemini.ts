@@ -1,6 +1,12 @@
 // lib/gemini.ts
 import { GoogleGenerativeAI } from "@google/generative-ai"
 
+type MCQOption = {
+  text: string;
+  isCorrect: boolean;
+};
+
+
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "")
 
 export async function getGeminiMCQ(question: string, answer: string) {
@@ -27,7 +33,7 @@ Return a JSON array of 4 options where one is correct, e.g.:
   const parsed = jsonMatch ? JSON.parse(jsonMatch[0]) : []
 
   return {
-    options: parsed.map((opt: any) => opt.text),
-    correct: parsed.find((opt: any) => opt.isCorrect)?.text,
+    options: (parsed as MCQOption[]).map((opt) => opt.text),
+    correct: (parsed as MCQOption[]).find((opt) => opt.isCorrect)?.text,
   }
 }
